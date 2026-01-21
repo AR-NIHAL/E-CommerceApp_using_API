@@ -17,6 +17,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             Row(
               children: [
+                Icon(Icons.mp_outlined,color: Colors.black87,size: 70,),
                 Icon(Icons.mp_outlined,color: Colors.black87,size: 70,)
               ],
             )
