@@ -85,7 +85,7 @@ class ProductCard extends StatelessWidget {
                 Align(
                   alignment: Alignment.centerRight,
                   child: IconButton(
-                    icon: const Icon(Icons.add_circle, color: Colors.blueAccent),
+                   // icon: const Icon(Icons.add_circle, color: Colors.blueAccent),
                     onPressed: () {},
                   ),
                 )
