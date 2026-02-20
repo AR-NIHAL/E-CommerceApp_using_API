@@ -6,8 +6,8 @@ class Product {
   final String image;
   final String category;
 
-  final double rating; // rate
-  final int ratingCount; // count
+  final double rating;
+  final int ratingCount;
 
   Product({
     required this.id,
@@ -32,8 +32,12 @@ class Product {
       description: json['description'] ?? '',
       image: json['image'] ?? '',
       category: json['category'] ?? '',
-      rating: ratingObj['rate'] == null ? 0.0 : (ratingObj['rate'] as num).toDouble(),
-      ratingCount: ratingObj['count'] == null ? 0 : (ratingObj['count'] as num).toInt(),
+      rating: ratingObj['rate'] == null
+          ? 0.0
+          : (ratingObj['rate'] as num).toDouble(),
+      ratingCount: ratingObj['count'] == null
+          ? 0
+          : (ratingObj['count'] as num).toInt(),
     );
   }
 }

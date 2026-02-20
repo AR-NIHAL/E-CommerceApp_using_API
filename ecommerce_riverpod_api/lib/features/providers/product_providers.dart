@@ -16,7 +16,7 @@ final productListProvider = FutureProvider<List<Product>>((ref) async {
   return list.map(Product.fromJson).toList();
 });
 
-// 3) search query (Phase-1 থেকে)
+// 3) search query (From Phase-1)
 final searchQueryProvider = StateProvider<String>((ref) => '');
 
 final filteredProductsProvider = Provider<AsyncValue<List<Product>>>((ref) {
