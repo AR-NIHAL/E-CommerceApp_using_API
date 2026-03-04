@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mini_commerece/features/home/cart_provider.dart';
 import 'package:mini_commerece/features/home/product_details_provider.dart';
 import 'package:mini_commerece/features/model/product_model.dart';
 
@@ -156,11 +157,10 @@ class ProductDetailsScreen extends ConsumerWidget {
               _BottomBar(
                 price: details.price,
                 onAddToCart: () {
-                  // Module 5 এ real cart provider বসবে
+                  ref.read(cartProvider.notifier).add(product);
+
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Added to cart (coming in Module 5)'),
-                    ),
+                    const SnackBar(content: Text('Added to cart')),
                   );
                 },
               ),
