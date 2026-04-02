@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:monoharini_ecommerce/providers/favourites_provider.dart';
 import '../models/product_model.dart';
+import '../providers/cart_provider.dart';
 
-class ProductDetailsScreen extends StatelessWidget {
+class ProductDetailsScreen extends ConsumerWidget {
   final ProductModel product;
 
   const ProductDetailsScreen({super.key, required this.product});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final favoriteIds = ref.watch(favoritesProvider);
+    final isFavorite = favoriteIds.contains(product.id);
+
     return Scaffold(
       backgroundColor: const Color(0xFFF7F7F7),
       body: SafeArea(
@@ -47,6 +53,26 @@ class ProductDetailsScreen extends StatelessWidget {
                               onPressed: () {
                                 Navigator.pop(context);
                               },
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 16,
+                          right: 16,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.white,
+                            child: IconButton(
+                              onPressed: () {
+                                ref
+                                    .read(favoritesProvider.notifier)
+                                    .toggleFavorite(product.id);
+                              },
+                              icon: Icon(
+                                isFavorite
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color: isFavorite ? Colors.red : Colors.black54,
+                              ),
                             ),
                           ),
                         ),
@@ -161,8 +187,10 @@ class ProductDetailsScreen extends StatelessWidget {
                 height: 52,
                 child: ElevatedButton(
                   onPressed: () {
+                    ref.read(cartProvider.notifier).addToCart(product);
+
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Add to Cart clicked')),
+                      SnackBar(content: Text('${product.title} added to cart')),
                     );
                   },
                   style: ElevatedButton.styleFrom(
