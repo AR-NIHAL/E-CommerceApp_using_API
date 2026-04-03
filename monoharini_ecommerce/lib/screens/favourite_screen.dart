@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:monoharini_ecommerce/providers/favourites_provider.dart';
-import '../models/product_model.dart';
 import '../providers/product_provider.dart';
 import '../widgets/product_item.dart';
 
