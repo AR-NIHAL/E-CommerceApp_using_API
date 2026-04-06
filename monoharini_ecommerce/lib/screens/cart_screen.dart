@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:monoharini_ecommerce/screens/checkout_screen.dart';
 import '../providers/cart_provider.dart';
 import '../widgets/cart_item_tile.dart';
 
@@ -166,10 +167,15 @@ class _CartSummarySection extends StatelessWidget {
               height: 54,
               child: ElevatedButton(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Checkout feature will be added later'),
-                    ),
+                  // ScaffoldMessenger.of(context).showSnackBar(
+                  //   const SnackBar(
+                  //     content: Text('Checkout feature will be added later'),
+                  //   ),
+                  // );
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const CheckoutScreen()),
                   );
                 },
                 style: ElevatedButton.styleFrom(
