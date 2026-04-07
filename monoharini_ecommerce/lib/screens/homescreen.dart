@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:monoharini_ecommerce/widgets/deal_of_the_day_card.dart';
+import 'package:monoharini_ecommerce/widgets/promo_banner_section.dart';
 import '../widgets/category_section.dart';
 import '../widgets/home_header.dart';
 import '../widgets/product_section.dart';
@@ -47,6 +49,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 22),
                 const CategorySection(),
+                const SizedBox(height: 18),
+                const PromoBannerSection(),
+                const SizedBox(height: 14),
+                const DealOfDayCard(),
                 const SizedBox(height: 24),
                 const ProductSection(),
               ],

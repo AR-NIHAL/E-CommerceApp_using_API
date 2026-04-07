@@ -11,7 +11,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _emailController = TextEditingController(
-    text: 'aashifa@gmail.com',
+    text: 'arnihal@gmail.com',
   );
   final TextEditingController _passwordController = TextEditingController(
     text: '***********',
@@ -20,19 +20,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     text: '450116',
   );
   final TextEditingController _addressController = TextEditingController(
-    text: "216 St Paul's Rd,",
+    text: "tongir mazar boosti,",
   );
   final TextEditingController _cityController = TextEditingController(
-    text: 'London',
+    text: 'sengarchor',
   );
   final TextEditingController _countryController = TextEditingController(
-    text: 'United Kingdom',
+    text: 'bangudesh',
   );
   final TextEditingController _bankAccountController = TextEditingController(
     text: '204356XXXXXXX',
   );
   final TextEditingController _accountHolderController = TextEditingController(
-    text: 'Abhiraj Sisodiya',
+    text: 'Nihall the boss',
   );
   final TextEditingController _ifscController = TextEditingController(
     text: 'SBIN00428',
