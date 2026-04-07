@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:monoharini_ecommerce/screens/onboarding_screen.dart';
 import 'screens/main_navigation_screen.dart';
 
 void main() {
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const MainNavigationScreen(),
+      home: const OnboardingScreen(),
     );
   }
 }
