@@ -8,7 +8,8 @@ class ProductSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final productsAsync = ref.watch(productsProvider);
+    final productsAsync = ref.watch(homeFilteredProductsProvider);
+    final selectedCategory = ref.watch(selectedCategoryProvider);
 
     return productsAsync.when(
       loading: () => const Center(
@@ -22,6 +23,26 @@ class ProductSection extends ConsumerWidget {
         child: Text('Error: $error', style: const TextStyle(color: Colors.red)),
       ),
       data: (products) {
+        if (products.isEmpty) {
+          return Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+            alignment: Alignment.center,
+            child: Text(
+              selectedCategory == null
+                  ? 'No products found'
+                  : 'No products found in this category',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: Colors.black54,
+              ),
+            ),
+          );
+        }
+
         return GridView.builder(
           itemCount: products.length,
           shrinkWrap: true,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/category_provider.dart';
+import '../providers/product_provider.dart';
 import 'category_item.dart';
 import 'small_action_button.dart';
 
@@ -10,6 +11,7 @@ class CategorySection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final categoriesAsync = ref.watch(categoriesProvider);
+    final selectedCategory = ref.watch(selectedCategoryProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,11 +86,21 @@ class CategorySection extends ConsumerWidget {
                 itemCount: categories.length,
                 itemBuilder: (context, index) {
                   final category = categories[index];
+                  final isSelected = selectedCategory == category.slug;
 
                   return CategoryItem(
                     category: category,
+                    isSelected: isSelected,
                     onTap: () {
-                      debugPrint('Clicked category: ${category.slug}');
+                      final notifier = ref.read(
+                        selectedCategoryProvider.notifier,
+                      );
+
+                      if (isSelected) {
+                        notifier.state = null;
+                      } else {
+                        notifier.state = category.slug;
+                      }
                     },
                   );
                 },

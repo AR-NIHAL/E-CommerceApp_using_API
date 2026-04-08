@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:monoharini_ecommerce/screens/favourite_screen.dart';
 import 'package:monoharini_ecommerce/screens/cart_screen.dart';
+import 'package:monoharini_ecommerce/screens/favourite_screen.dart';
 import 'package:monoharini_ecommerce/screens/homescreen.dart';
+import 'package:monoharini_ecommerce/screens/search_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -17,7 +18,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     HomeScreen(),
     FavoritesScreen(),
     CartScreen(),
-    SearchPlaceholderScreen(),
+    SearchScreen(showBackButton: false),
     SettingsPlaceholderScreen(),
   ];
 
@@ -191,27 +192,6 @@ class _CenterCartButton extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class SearchPlaceholderScreen extends StatelessWidget {
-  const SearchPlaceholderScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Color(0xFFF7F7F7),
-      body: Center(
-        child: Text(
-          'Search Screen',
-          style: TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
         ),
       ),
     );

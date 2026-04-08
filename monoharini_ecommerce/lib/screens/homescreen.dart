@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:monoharini_ecommerce/screens/search_screen.dart';
 import 'package:monoharini_ecommerce/widgets/deal_of_the_day_card.dart';
 import 'package:monoharini_ecommerce/widgets/promo_banner_section.dart';
+import '../providers/product_provider.dart';
 import '../widgets/category_section.dart';
 import '../widgets/home_header.dart';
 import '../widgets/product_section.dart';
 import '../widgets/search_textfield.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   late final TextEditingController searchController;
 
   @override
@@ -44,7 +47,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 SearchTextField(
                   controller: searchController,
                   hintText: 'Search any Product..',
-                  onChanged: (value) {},
+                  readOnly: true,
+                  onTap: () {
+                    ref.read(searchQueryProvider.notifier).state = '';
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const SearchScreen()),
+                    );
+                  },
                   onMicTap: () {},
                 ),
                 const SizedBox(height: 22),
