@@ -14,19 +14,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   final List<_OnboardingData> _pages = const [
     _OnboardingData(
-      imagePath: 'assets/images/onboarding1.png',
+      imagePath: 'assets/images/onboarding1.jpg',
       title: 'Choose Products',
       description:
           'Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit.',
     ),
     _OnboardingData(
-      imagePath: 'assets/images/onboarding2.png',
+      imagePath: 'assets/images/onboarding2.jpg',
       title: 'Make Payment',
       description:
           'Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit.',
     ),
     _OnboardingData(
-      imagePath: 'assets/images/onboarding3.png',
+      imagePath: 'assets/images/onboarding3.jpg',
       title: 'Get Your Order',
       description:
           'Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit.',
