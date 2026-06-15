@@ -42,7 +42,7 @@ class ProductDetailsScreen extends ConsumerWidget {
                       child: Image.network(
                         heroUrl,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
+                        errorBuilder: (_, _, _) => Container(
                           color: AppColors.border,
                           child: const Center(child: Icon(Icons.broken_image)),
                         ),
@@ -127,7 +127,7 @@ class ProductDetailsScreen extends ConsumerWidget {
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
                         itemCount: details.images.length,
-                        separatorBuilder: (_, __) => const SizedBox(width: 10),
+                        separatorBuilder: (_, _) => const SizedBox(width: 10),
                         itemBuilder: (context, i) {
                           final url = details.images[i];
                           return ClipRRect(
@@ -137,7 +137,7 @@ class ProductDetailsScreen extends ConsumerWidget {
                               child: Image.network(
                                 url,
                                 fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => Container(
+                                errorBuilder: (_, _, _) => Container(
                                   color: AppColors.border,
                                   child: const Center(
                                     child: Icon(Icons.broken_image, size: 18),

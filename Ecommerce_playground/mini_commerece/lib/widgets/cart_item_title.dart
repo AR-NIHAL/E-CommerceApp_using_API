@@ -36,7 +36,7 @@ class CartItemTile extends StatelessWidget {
               child: Image.network(
                 item.product.thumbnail,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
+                errorBuilder: (_, _, _) => Container(
                   color: AppColors.border,
                   child: const Center(child: Icon(Icons.broken_image)),
                 ),

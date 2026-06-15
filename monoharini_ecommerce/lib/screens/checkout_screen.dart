@@ -149,7 +149,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         children: [
           _fieldLabel('State'),
           DropdownButtonFormField<String>(
-            value: _selectedState,
+            initialValue: _selectedState,
             icon: const Icon(
               Icons.keyboard_arrow_down_rounded,
               size: 28,
