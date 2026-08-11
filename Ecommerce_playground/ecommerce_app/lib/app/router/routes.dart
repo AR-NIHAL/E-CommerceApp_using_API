@@ -9,5 +9,7 @@ abstract final class AppRoutes {
   static const String cart = '/shell/cart';
   static const String wishlist = '/shell/wishlist';
   static const String profile = '/shell/profile';
-  static const String productDetail = '/shell/product/:id';
+  static const String productDetail = '/product/:id';
+
+  static String productDetailFor(int id) => '/product/$id';
 }

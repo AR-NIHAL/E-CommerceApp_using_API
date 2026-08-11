@@ -7,6 +7,7 @@ import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/cart/presentation/screens/cart_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/products/presentation/screens/home_screen.dart';
+import '../../features/products/presentation/screens/product_detail_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/shell/presentation/screens/main_shell.dart';
 import '../../features/wishlist/presentation/screens/wishlist_screen.dart';
@@ -28,7 +29,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
       final isOnboarding = location == AppRoutes.onboarding;
       final isLogin = location == AppRoutes.login;
-      final isShell = location.startsWith(AppRoutes.shell);
+      final isShell = location.startsWith(AppRoutes.shell) ||
+          location == AppRoutes.productDetail;
 
       if (isOnboarding) {
         if (hasSeenOnboarding && isLoggedIn) return AppRoutes.home;
@@ -59,6 +61,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.login,
         name: 'login',
         builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.productDetail,
+        name: 'productDetail',
+        builder: (context, state) => ProductDetailScreen(
+          productId: int.parse(state.pathParameters['id']!),
+        ),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
