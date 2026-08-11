@@ -38,6 +38,18 @@ class _FakeRemoteSource implements ProductsRemoteDataSource {
         const Category(slug: 'beauty', name: 'Beauty'),
         const Category(slug: 'fragrances', name: 'Fragrances'),
       ];
+
+  @override
+  Future<Product> getProduct(int id) async => _product(id);
+}
+
+Product _product(int id) {
+  return Product.fromJson({
+    'id': id,
+    'title': 'Product $id',
+    'price': 10.0,
+    'rating': 4.0,
+  });
 }
 
 void main() {

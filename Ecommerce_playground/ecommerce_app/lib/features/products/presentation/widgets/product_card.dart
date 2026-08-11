@@ -38,42 +38,44 @@ class ProductCard extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  if (product.thumbnail.isNotEmpty)
-                    Image.network(
-                      product.thumbnail,
-                      fit: BoxFit.cover,
-                      loadingBuilder: (context, child, progress) {
-                        if (progress == null) return child;
-                        return Container(
-                          color: AppColors.border,
-                          alignment: Alignment.center,
-                          child: const Icon(
-                            Icons.image_outlined,
-                            size: 32,
-                            color: AppColors.muted,
+                  Hero(
+                    tag: 'product-image-${product.id}',
+                    child: product.thumbnail.isNotEmpty
+                        ? Image.network(
+                            product.thumbnail,
+                            fit: BoxFit.cover,
+                            loadingBuilder: (context, child, progress) {
+                              if (progress == null) return child;
+                              return Container(
+                                color: AppColors.border,
+                                alignment: Alignment.center,
+                                child: const Icon(
+                                  Icons.image_outlined,
+                                  size: 32,
+                                  color: AppColors.muted,
+                                ),
+                              );
+                            },
+                            errorBuilder: (context, error, stack) => Container(
+                              color: AppColors.border,
+                              alignment: Alignment.center,
+                              child: const Icon(
+                                Icons.image_outlined,
+                                size: 32,
+                                color: AppColors.muted,
+                              ),
+                            ),
+                          )
+                        : Container(
+                            color: AppColors.border,
+                            alignment: Alignment.center,
+                            child: const Icon(
+                              Icons.image_outlined,
+                              size: 32,
+                              color: AppColors.muted,
+                            ),
                           ),
-                        );
-                      },
-                      errorBuilder: (context, error, stack) => Container(
-                        color: AppColors.border,
-                        alignment: Alignment.center,
-                        child: const Icon(
-                          Icons.image_outlined,
-                          size: 32,
-                          color: AppColors.muted,
-                        ),
-                      ),
-                    )
-                  else
-                    Container(
-                      color: AppColors.border,
-                      alignment: Alignment.center,
-                      child: const Icon(
-                        Icons.image_outlined,
-                        size: 32,
-                        color: AppColors.muted,
-                      ),
-                    ),
+                  ),
                   Positioned(
                     top: 8,
                     left: 8,

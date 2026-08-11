@@ -21,5 +21,7 @@ abstract interface class ProductsRepository {
     String? query,
   });
 
+  Future<Product> getProduct(int id);
+
   Future<List<Category>> getCategories();
 }

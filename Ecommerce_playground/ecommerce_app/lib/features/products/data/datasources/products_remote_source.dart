@@ -57,6 +57,19 @@ class ProductsRemoteDataSource {
     }
   }
 
+  Future<Product> getProduct(int id) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        '${ApiConstants.products}/$id',
+      );
+      return Product.fromJson(response.data!);
+    } on DioException catch (error) {
+      throw FailureMapper.fromDio(error);
+    } catch (_) {
+      throw const UnknownFailure();
+    }
+  }
+
   Future<List<Category>> getCategories() async {
     try {
       final response = await _dio.get<List<dynamic>>(

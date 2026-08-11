@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'products_provider.dart';
+part of 'cart_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -9,53 +9,52 @@ part of 'products_provider.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(ProductsController)
-const productsControllerProvider = ProductsControllerProvider._();
+@ProviderFor(CartController)
+const cartControllerProvider = CartControllerProvider._();
 
-final class ProductsControllerProvider
-    extends $NotifierProvider<ProductsController, ProductsState> {
-  const ProductsControllerProvider._()
+final class CartControllerProvider
+    extends $NotifierProvider<CartController, CartState> {
+  const CartControllerProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'productsControllerProvider',
+        name: r'cartControllerProvider',
         isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$productsControllerHash();
+  String debugGetCreateSourceHash() => _$cartControllerHash();
 
   @$internal
   @override
-  ProductsController create() => ProductsController();
+  CartController create() => CartController();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(ProductsState value) {
+  Override overrideWithValue(CartState value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<ProductsState>(value),
+      providerOverride: $SyncValueProvider<CartState>(value),
     );
   }
 }
 
-String _$productsControllerHash() =>
-    r'0b8f42ee9e029012153aabc51dbe5d997af0d888';
+String _$cartControllerHash() => r'31bfece1f4a10e96f67624c24408756aa25564d8';
 
-abstract class _$ProductsController extends $Notifier<ProductsState> {
-  ProductsState build();
+abstract class _$CartController extends $Notifier<CartState> {
+  CartState build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<ProductsState, ProductsState>;
+    final ref = this.ref as $Ref<CartState, CartState>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<ProductsState, ProductsState>,
-              ProductsState,
+              AnyNotifier<CartState, CartState>,
+              CartState,
               Object?,
               Object?
             >;

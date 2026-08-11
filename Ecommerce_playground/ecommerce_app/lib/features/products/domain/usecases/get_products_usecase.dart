@@ -1,4 +1,5 @@
 import '../entities/category.dart';
+import '../entities/product.dart';
 import '../repositories/products_repository.dart';
 
 class GetProductsParams {
@@ -36,4 +37,12 @@ class GetCategoriesUsecase {
   final ProductsRepository _repository;
 
   Future<List<Category>> call() => _repository.getCategories();
+}
+
+class GetProductUsecase {
+  const GetProductUsecase(this._repository);
+
+  final ProductsRepository _repository;
+
+  Future<Product> call(int id) => _repository.getProduct(id);
 }

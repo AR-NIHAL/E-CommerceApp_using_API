@@ -1,4 +1,5 @@
 import '../../domain/entities/category.dart';
+import '../../domain/entities/product.dart';
 import '../../domain/repositories/products_repository.dart';
 import '../datasources/products_remote_source.dart';
 
@@ -21,6 +22,11 @@ class ProductsRepositoryImpl implements ProductsRepository {
       category: category,
       query: query,
     );
+  }
+
+  @override
+  Future<Product> getProduct(int id) {
+    return _remoteSource.getProduct(id);
   }
 
   @override

@@ -37,6 +37,18 @@ class _FakeProductsRepository implements ProductsRepository {
 
   @override
   Future<List<Category>> getCategories() async => [];
+
+  @override
+  Future<Product> getProduct(int id) async => _product(id);
+}
+
+Product _product(int id) {
+  return Product.fromJson({
+    'id': id,
+    'title': 'P$id',
+    'price': id.toDouble(),
+    'rating': id % 5 == 0 ? 5.0 : id % 5,
+  });
 }
 
 Future<void> _waitForLoad(
