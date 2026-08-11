@@ -8,11 +8,6 @@ import 'package:ecommerce_app/features/products/presentation/providers/product_d
 import 'package:ecommerce_app/features/products/presentation/providers/products_dependencies.dart';
 
 class _FakeProductsRepository implements ProductsRepository {
-  _FakeProductsRepository({this.failOnce = false});
-
-  final bool failOnce;
-  bool _hasFailed = false;
-
   @override
   Future<ProductsPage> getProducts({
     int limit = 20,
@@ -28,10 +23,6 @@ class _FakeProductsRepository implements ProductsRepository {
 
   @override
   Future<Product> getProduct(int id) async {
-    if (failOnce && !_hasFailed) {
-      _hasFailed = true;
-      throw Exception('boom');
-    }
     return Product.fromJson({
       'id': id,
       'title': 'Product $id',

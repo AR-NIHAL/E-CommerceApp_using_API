@@ -6,6 +6,7 @@ import '../../../../app/router/routes.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../shared/widgets/error_view.dart';
 import '../../../../shared/widgets/product_card_shimmer.dart';
+import '../../../cart/presentation/providers/cart_provider.dart';
 import '../providers/products_provider.dart';
 import '../widgets/category_chips.dart';
 import '../widgets/product_card.dart';
@@ -65,7 +66,7 @@ class HomeScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 8),
             Expanded(
-              child: _buildBody(context, state, controller),
+              child: _buildBody(context, ref, state, controller),
             ),
           ],
         ),
@@ -73,7 +74,7 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildBody(BuildContext context, ProductsState state,
+  Widget _buildBody(BuildContext context, WidgetRef ref, ProductsState state,
       ProductsController controller) {
     if (state.isLoading) {
       return const _ProductGridShimmer();
@@ -118,6 +119,8 @@ class HomeScreen extends ConsumerWidget {
             return ProductCard(
               product: product,
               onTap: () => context.go(AppRoutes.productDetailFor(product.id)),
+              onAddToCart: () =>
+                  ref.read(cartControllerProvider.notifier).addProduct(product),
             );
           },
         ),

@@ -1,8 +1,24 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:ecommerce_app/features/cart/data/storage/cart_storage.dart';
+import 'package:ecommerce_app/features/cart/domain/entities/cart_item.dart';
+import 'package:ecommerce_app/features/cart/presentation/providers/cart_dependencies.dart';
 import 'package:ecommerce_app/features/cart/presentation/providers/cart_provider.dart';
 import 'package:ecommerce_app/features/products/domain/entities/product.dart';
+
+class _InMemoryCartStorage implements CartStorage {
+  List<CartItem> stored = [];
+
+  @override
+  void clear() => stored = [];
+
+  @override
+  List<CartItem> readItems() => List.of(stored);
+
+  @override
+  void saveItems(List<CartItem> items) => stored = List.of(items);
+}
 
 Product _product(int id, {double price = 10.0, double discount = 0}) {
   return Product.fromJson({
@@ -17,9 +33,15 @@ Product _product(int id, {double price = 10.0, double discount = 0}) {
 void main() {
   late ProviderContainer container;
   late CartController controller;
+  late _InMemoryCartStorage storage;
 
   setUp(() {
-    container = ProviderContainer();
+    storage = _InMemoryCartStorage();
+    container = ProviderContainer(
+      overrides: [
+        cartStorageProvider.overrideWithValue(storage),
+      ],
+    );
     controller = container.read(cartControllerProvider.notifier);
     addTearDown(container.dispose);
   });
@@ -103,11 +125,49 @@ void main() {
     expect(controller.state.totalItems, 0);
   });
 
-  test('state persists across controllers via container', () {
+  test('mutations persist to storage', () {
+    controller.addProduct(_product(1, price: 5.0));
+    controller.increment(1);
+
+    expect(storage.stored, hasLength(1));
+    expect(storage.stored.single.quantity, 2);
+  });
+
+  test('clear wipes storage', () {
+    controller.addProduct(_product(1));
+    controller.clear();
+
+    expect(storage.stored, isEmpty);
+  });
+
+  test('a new container restores state from storage', () {
     controller.addProduct(_product(1, price: 5.0));
 
-    final reread = container.read(cartControllerProvider);
-    expect(reread.totalItems, 1);
-    expect(reread.totalPrice, 5.0);
+    final freshContainer = ProviderContainer(
+      overrides: [
+        cartStorageProvider.overrideWithValue(storage),
+      ],
+    );
+    addTearDown(freshContainer.dispose);
+
+    final restored = freshContainer.read(cartControllerProvider);
+    expect(restored.totalItems, 1);
+    expect(restored.totalPrice, 5.0);
+    expect(restored.items.single.product.id, 1);
+  });
+
+  test('build restores items persisted before creation', () {
+    storage.saveItems([CartItem(product: _product(7, price: 3.0), quantity: 2)]);
+
+    final freshContainer = ProviderContainer(
+      overrides: [
+        cartStorageProvider.overrideWithValue(storage),
+      ],
+    );
+    addTearDown(freshContainer.dispose);
+
+    final restored = freshContainer.read(cartControllerProvider);
+    expect(restored.totalItems, 2);
+    expect(restored.totalPrice, 6.0);
   });
 }

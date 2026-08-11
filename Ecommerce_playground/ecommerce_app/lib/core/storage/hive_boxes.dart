@@ -11,4 +11,14 @@ class HiveBoxes {
     if (Hive.isBoxOpen(auth)) return Hive.box(auth);
     return Hive.openBox(auth);
   }
+
+  static Future<Box> openCartBox() async {
+    if (Hive.isBoxOpen(cart)) return Hive.box(cart);
+    return Hive.openBox(cart);
+  }
+
+  static Future<Box> openWishlistBox() async {
+    if (Hive.isBoxOpen(wishlist)) return Hive.box(wishlist);
+    return Hive.openBox(wishlist);
+  }
 }

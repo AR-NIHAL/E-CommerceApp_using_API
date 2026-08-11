@@ -1,7 +1,9 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../products/domain/entities/product.dart';
+import '../../data/storage/cart_storage.dart';
 import '../../domain/entities/cart_item.dart';
+import 'cart_dependencies.dart';
 
 part 'cart_provider.g.dart';
 
@@ -22,8 +24,12 @@ class CartState {
 
 @Riverpod(keepAlive: true)
 class CartController extends _$CartController {
+  CartStorage get _storage => ref.read(cartStorageProvider);
+
   @override
-  CartState build() => const CartState();
+  CartState build() {
+    return CartState(items: _storage.readItems());
+  }
 
   void addProduct(Product product, {int quantity = 1}) {
     final existingIndex =
@@ -37,7 +43,7 @@ class CartController extends _$CartController {
     } else {
       updated.add(CartItem(product: product, quantity: quantity));
     }
-    state = state.copyWith(items: updated);
+    _setState(CartState(items: updated));
   }
 
   void increment(int productId) {
@@ -49,13 +55,17 @@ class CartController extends _$CartController {
   }
 
   void removeItem(int productId) {
-    state = state.copyWith(
-      items: state.items.where((item) => item.product.id != productId).toList(),
+    _setState(
+      CartState(
+        items: state.items
+            .where((item) => item.product.id != productId)
+            .toList(),
+      ),
     );
   }
 
   void clear() {
-    state = const CartState();
+    _setState(const CartState());
   }
 
   void _updateQuantity(int productId, int delta) {
@@ -72,6 +82,11 @@ class CartController extends _$CartController {
       updated[index] = item.copyWith(quantity: newQuantity);
     }
 
-    state = state.copyWith(items: updated);
+    _setState(CartState(items: updated));
+  }
+
+  void _setState(CartState next) {
+    state = next;
+    _storage.saveItems(next.items);
   }
 }
