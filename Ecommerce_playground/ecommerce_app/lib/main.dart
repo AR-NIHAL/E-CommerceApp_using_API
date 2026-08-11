@@ -1,18 +1,17 @@
-import 'package:ecommerce_app/views/screens/homescreen.dart';
-import 'package:ecommerce_app/views/screens/onboarding_screen/onboarding_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+import 'app/app.dart';
+import 'core/storage/hive_boxes.dart';
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: OnboardingScreen(),
-    );
-  }
+  await Hive.initFlutter();
+  await Hive.openBox(HiveBoxes.auth);
+  await Hive.openBox(HiveBoxes.cart);
+  await Hive.openBox(HiveBoxes.wishlist);
+
+  runApp(const ProviderScope(child: SwiftShopApp()));
 }
