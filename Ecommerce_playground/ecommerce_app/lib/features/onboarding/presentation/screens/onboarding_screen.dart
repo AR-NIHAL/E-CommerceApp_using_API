@@ -1,27 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/routes.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_text_styles.dart';
+import '../../../auth/presentation/providers/auth_dependencies.dart';
 import '../onboarding_data.dart';
 
-class OnboardingScreen extends StatefulWidget {
+class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
 
   @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
+  ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
+class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final PageController _controller = PageController();
   int _currentPage = 0;
 
   bool get _isLastPage => _currentPage == onboardingItems.length - 1;
 
+  Future<void> _finish() async {
+    final storage = ref.read(onboardingStorageProvider);
+    await storage.markOnboardingSeen();
+    if (!mounted) return;
+    context.go(AppRoutes.login);
+  }
+
   void _nextPage() {
     if (_isLastPage) {
-      context.go(AppRoutes.home);
+      _finish();
       return;
     }
     _controller.nextPage(
@@ -47,7 +56,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: TextButton(
-                  onPressed: () => context.go(AppRoutes.home),
+                  onPressed: _finish,
                   child: const Text('Skip'),
                 ),
               ),
