@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../app/theme/app_colors.dart';
+import '../../../../app/theme/app_palette.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../providers/products_provider.dart';
 
@@ -35,14 +35,16 @@ class _ProductSearchBarState extends ConsumerState<ProductSearchBar> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+
     return TextField(
       controller: _controller,
       onChanged: _onChanged,
       textInputAction: TextInputAction.search,
       decoration: InputDecoration(
         hintText: 'Search products...',
-        hintStyle: AppTextStyles.body.copyWith(color: AppColors.muted),
-        prefixIcon: const Icon(Icons.search, color: AppColors.muted),
+        hintStyle: AppTextStyles.of(context).body.copyWith(color: palette.muted),
+        prefixIcon: Icon(Icons.search, color: palette.muted),
         suffixIcon: _controller.text.isEmpty
             ? null
             : IconButton(
@@ -50,10 +52,10 @@ class _ProductSearchBarState extends ConsumerState<ProductSearchBar> {
                   _controller.clear();
                   ref.read(productsControllerProvider.notifier).search('');
                 },
-                icon: const Icon(Icons.close, color: AppColors.muted),
+                icon: Icon(Icons.close, color: palette.muted),
               ),
         filled: true,
-        fillColor: AppColors.surface,
+        fillColor: palette.surface,
         contentPadding: const EdgeInsets.symmetric(vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),

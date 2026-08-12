@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/routes.dart';
-import '../../../../app/theme/app_colors.dart';
+import '../../../../app/theme/app_palette.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../providers/auth_provider.dart';
 
@@ -48,6 +48,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
     final isLoading = authState.isLoading;
+    final palette = AppPalette.of(context);
+    final text = AppTextStyles.of(context);
 
     return Scaffold(
       body: SafeArea(
@@ -59,11 +61,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Welcome back', style: AppTextStyles.display),
+                  Text('Welcome back', style: text.display),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     'Sign in to continue shopping.',
-                    style: AppTextStyles.body,
+                    style: text.body,
                   ),
                   const SizedBox(height: 40),
                   TextFormField(
@@ -117,12 +119,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     child: ElevatedButton(
                       onPressed: isLoading ? null : _submit,
                       child: isLoading
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 22,
                               height: 22,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2.5,
-                                color: AppColors.onAccent,
+                                color: palette.onAccent,
                               ),
                             )
                           : const Text('Sign In'),
@@ -145,21 +147,23 @@ class _ErrorBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.error.withValues(alpha: 0.08),
+        color: palette.error.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
-          const Icon(Icons.error_outline, size: 20, color: AppColors.error),
+          Icon(Icons.error_outline, size: 20, color: palette.error),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               message,
-              style: AppTextStyles.label.copyWith(color: AppColors.error),
+              style: AppTextStyles.of(context).label.copyWith(color: palette.error),
             ),
           ),
         ],

@@ -7,6 +7,7 @@ import '../../../../app/theme/app_text_styles.dart';
 import '../../../../shared/widgets/error_view.dart';
 import '../../../../shared/widgets/product_card_shimmer.dart';
 import '../../../cart/presentation/providers/cart_provider.dart';
+import '../../../wishlist/presentation/providers/wishlist_provider.dart';
 import '../providers/products_provider.dart';
 import '../widgets/category_chips.dart';
 import '../widgets/product_card.dart';
@@ -51,7 +52,7 @@ class HomeScreen extends ConsumerWidget {
                 children: [
                   Text(
                     'Products',
-                    style: AppTextStyles.heading,
+                    style: AppTextStyles.of(context).heading,
                   ),
                   _SortButton(
                     sort: state.sort,
@@ -86,7 +87,7 @@ class HomeScreen extends ConsumerWidget {
 
     if (state.products.isEmpty) {
       return Center(
-        child: Text('No products found', style: AppTextStyles.body),
+        child: Text('No products found', style: AppTextStyles.of(context).body),
       );
     }
 
@@ -116,11 +117,18 @@ class HomeScreen extends ConsumerWidget {
             }
 
             final product = state.products[index];
+            final wishlisted = ref
+                .watch(wishlistControllerProvider)
+                .any((item) => item.id == product.id);
             return ProductCard(
               product: product,
+              isWishlisted: wishlisted,
               onTap: () => context.go(AppRoutes.productDetailFor(product.id)),
               onAddToCart: () =>
                   ref.read(cartControllerProvider.notifier).addProduct(product),
+              onToggleWishlist: () => ref
+                  .read(wishlistControllerProvider.notifier)
+                  .toggle(product),
             );
           },
         ),

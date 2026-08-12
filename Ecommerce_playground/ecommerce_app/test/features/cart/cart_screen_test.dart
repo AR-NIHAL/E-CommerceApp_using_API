@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:ecommerce_app/app/theme/app_theme.dart';
 import 'package:ecommerce_app/features/cart/data/storage/cart_storage.dart';
 import 'package:ecommerce_app/features/cart/domain/entities/cart_item.dart';
 import 'package:ecommerce_app/features/cart/presentation/providers/cart_dependencies.dart';
@@ -44,7 +45,7 @@ void main() {
         overrides: [
           cartStorageProvider.overrideWithValue(storage),
         ],
-        child: const MaterialApp(home: CartScreen()),
+        child: MaterialApp(theme: AppTheme.light, home: const CartScreen()),
       ),
     );
     await tester.pumpAndSettle();

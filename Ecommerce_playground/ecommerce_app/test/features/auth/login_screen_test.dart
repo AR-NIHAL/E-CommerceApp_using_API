@@ -5,12 +5,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'package:ecommerce_app/app/theme/app_theme.dart';
 import 'package:ecommerce_app/core/storage/hive_boxes.dart';
 import 'package:ecommerce_app/features/auth/presentation/screens/login_screen.dart';
 
 Widget _buildTestable() {
-  return const ProviderScope(
-    child: MaterialApp(home: LoginScreen()),
+  return ProviderScope(
+    child: MaterialApp(theme: AppTheme.light, home: const LoginScreen()),
   );
 }
 

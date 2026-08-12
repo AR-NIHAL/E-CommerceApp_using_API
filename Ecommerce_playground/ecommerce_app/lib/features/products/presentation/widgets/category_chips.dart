@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../app/theme/app_colors.dart';
+import '../../../../app/theme/app_palette.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../providers/category_provider.dart';
 import '../providers/products_provider.dart';
@@ -65,6 +65,8 @@ class _CategoryChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: GestureDetector(
@@ -74,18 +76,18 @@ class _CategoryChip extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: selected ? AppColors.ink : AppColors.surface,
+            color: selected ? palette.ink : palette.surface,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: selected ? AppColors.ink : AppColors.border,
+              color: selected ? palette.ink : palette.border,
             ),
           ),
           child: Text(
             label,
-            style: AppTextStyles.label.copyWith(
-              color: selected ? AppColors.onAccent : AppColors.inkSoft,
-              fontWeight: FontWeight.w600,
-            ),
+            style: AppTextStyles.of(context).label.copyWith(
+                  color: selected ? palette.onAccent : palette.inkSoft,
+                  fontWeight: FontWeight.w600,
+                ),
           ),
         ),
       ),

@@ -22,7 +22,10 @@ class PlaceholderScreen extends StatelessWidget {
           children: [
             Icon(icon, size: 56, color: Theme.of(context).colorScheme.outline),
             const SizedBox(height: 16),
-            Text('Coming in a later phase', style: AppTextStyles.label),
+            Text(
+              'Coming in a later phase',
+              style: AppTextStyles.of(context).label,
+            ),
           ],
         ),
       ),

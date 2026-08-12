@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/routes.dart';
-import '../../../../app/theme/app_colors.dart';
+import '../../../../app/theme/app_palette.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../auth/presentation/providers/auth_dependencies.dart';
 import '../onboarding_data.dart';
@@ -98,6 +98,9 @@ class _OnboardingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    final text = AppTextStyles.of(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),
       child: Column(
@@ -107,24 +110,28 @@ class _OnboardingPage extends StatelessWidget {
             width: 180,
             height: 180,
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: palette.surface,
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.ink.withValues(alpha: 0.06),
+                  color: palette.ink.withValues(alpha: 0.06),
                   blurRadius: 40,
                   offset: const Offset(0, 16),
                 ),
               ],
             ),
-            child: Icon(item.icon, size: 72, color: AppColors.ink),
+            child: Icon(item.icon, size: 72, color: palette.ink),
           ),
           const SizedBox(height: 48),
-          Text(item.title, style: AppTextStyles.display, textAlign: TextAlign.center),
+          Text(
+            item.title,
+            style: text.display,
+            textAlign: TextAlign.center,
+          ),
           const SizedBox(height: 16),
           Text(
             item.subtitle,
-            style: AppTextStyles.body,
+            style: text.body,
             textAlign: TextAlign.center,
           ),
         ],
@@ -141,6 +148,8 @@ class _DotsIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(count, (index) {
@@ -151,7 +160,7 @@ class _DotsIndicator extends StatelessWidget {
           width: isActive ? 24 : 8,
           height: 8,
           decoration: BoxDecoration(
-            color: isActive ? AppColors.ink : AppColors.border,
+            color: isActive ? palette.ink : palette.border,
             borderRadius: BorderRadius.circular(4),
           ),
         );

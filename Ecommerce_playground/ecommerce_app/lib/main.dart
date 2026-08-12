@@ -17,6 +17,7 @@ Future<void> main() async {
   await Hive.openBox(HiveBoxes.auth);
   await Hive.openBox(HiveBoxes.cart);
   await Hive.openBox(HiveBoxes.wishlist);
+  await Hive.openBox(HiveBoxes.settings);
 
   runApp(const ProviderScope(child: SwiftShopApp()));
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../app/theme/app_colors.dart';
+import '../../../../app/theme/app_palette.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../providers/products_provider.dart';
 
@@ -17,7 +17,7 @@ class SortSheet extends StatelessWidget {
   }) {
     return showModalBottomSheet<void>(
       context: context,
-      backgroundColor: AppColors.background,
+      backgroundColor: AppPalette.of(context).background,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -34,7 +34,7 @@ class SortSheet extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Sort by', style: AppTextStyles.heading),
+            Text('Sort by', style: AppTextStyles.of(context).heading),
             const SizedBox(height: 16),
             _SortTile(
               option: ProductSort.featured,
@@ -93,21 +93,23 @@ class _SortTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+
     return ListTile(
       onTap: onTap,
       contentPadding: EdgeInsets.zero,
       leading: Icon(
         icon,
-        color: selected ? AppColors.ink : AppColors.muted,
+        color: selected ? palette.ink : palette.muted,
       ),
       title: Text(
         label,
-        style: AppTextStyles.body.copyWith(
-          color: selected ? AppColors.ink : AppColors.inkSoft,
-          fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-        ),
+        style: AppTextStyles.of(context).body.copyWith(
+              color: selected ? palette.ink : palette.inkSoft,
+              fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+            ),
       ),
-      trailing: selected ? const Icon(Icons.check, color: AppColors.ink) : null,
+      trailing: selected ? Icon(Icons.check, color: palette.ink) : null,
     );
   }
 }

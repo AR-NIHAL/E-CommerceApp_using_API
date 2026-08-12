@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../app/theme/app_colors.dart';
+import '../../../../app/theme/app_palette.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../shared/widgets/empty_view.dart';
 import '../../../cart/presentation/providers/cart_provider.dart';
@@ -37,9 +37,10 @@ class CartScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cart = ref.watch(cartControllerProvider);
+    final palette = AppPalette.of(context);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: palette.background,
       appBar: AppBar(
         title: const Text('Cart'),
         actions: [
@@ -84,6 +85,8 @@ class _CartItemTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final product = item.product;
+    final palette = AppPalette.of(context);
+    final text = AppTextStyles.of(context);
 
     return Dismissible(
       key: ValueKey(product.id),
@@ -92,7 +95,7 @@ class _CartItemTile extends ConsumerWidget {
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
         decoration: BoxDecoration(
-          color: AppColors.error,
+          color: palette.error,
           borderRadius: BorderRadius.circular(16),
         ),
         child: const Icon(Icons.delete_outline, color: Colors.white),
@@ -103,9 +106,9 @@ class _CartItemTile extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: palette.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: palette.border),
         ),
         child: Row(
           children: [
@@ -119,12 +122,12 @@ class _CartItemTile extends ConsumerWidget {
                 errorBuilder: (context, error, stack) => Container(
                   width: 72,
                   height: 72,
-                  color: AppColors.border,
+                  color: palette.border,
                   alignment: Alignment.center,
-                  child: const Icon(
+                  child: Icon(
                     Icons.image_outlined,
                     size: 28,
-                    color: AppColors.muted,
+                    color: palette.muted,
                   ),
                 ),
               ),
@@ -136,14 +139,14 @@ class _CartItemTile extends ConsumerWidget {
                 children: [
                   Text(
                     product.title,
-                    style: AppTextStyles.body.copyWith(color: AppColors.ink),
+                    style: text.body.copyWith(color: palette.ink),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 6),
                   Text(
                     '\$${product.discountPrice.toStringAsFixed(2)}',
-                    style: AppTextStyles.price,
+                    style: text.price,
                   ),
                 ],
               ),
@@ -164,6 +167,8 @@ class _QuantityStepper extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(cartControllerProvider.notifier);
+    final palette = AppPalette.of(context);
+    final text = AppTextStyles.of(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -171,9 +176,9 @@ class _QuantityStepper extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
           decoration: BoxDecoration(
-            color: AppColors.background,
+            color: palette.background,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: AppColors.border),
+            border: Border.all(color: palette.border),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -189,8 +194,8 @@ class _QuantityStepper extends ConsumerWidget {
                 child: Text(
                   '${item.quantity}',
                   textAlign: TextAlign.center,
-                  style: AppTextStyles.body.copyWith(
-                    color: AppColors.ink,
+                  style: text.body.copyWith(
+                    color: palette.ink,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -207,7 +212,7 @@ class _QuantityStepper extends ConsumerWidget {
         const SizedBox(height: 4),
         Text(
           item.lineTotal.toStringAsFixed(2),
-          style: AppTextStyles.label.copyWith(fontSize: 12),
+          style: text.label.copyWith(fontSize: 12),
         ),
       ],
     );
@@ -230,11 +235,14 @@ class _CartSummaryBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    final text = AppTextStyles.of(context);
+
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: const Border(top: BorderSide(color: AppColors.border)),
+        color: palette.surface,
+        border: Border(top: BorderSide(color: palette.border)),
       ),
       child: SafeArea(
         top: false,
@@ -247,11 +255,11 @@ class _CartSummaryBar extends StatelessWidget {
                 children: [
                   Text(
                     '${cart.totalItems} item${cart.totalItems == 1 ? '' : 's'}',
-                    style: AppTextStyles.label,
+                    style: text.label,
                   ),
                   Text(
                     '\$${cart.totalPrice.toStringAsFixed(2)}',
-                    style: AppTextStyles.heading.copyWith(fontSize: 20),
+                    style: text.heading.copyWith(fontSize: 20),
                   ),
                 ],
               ),

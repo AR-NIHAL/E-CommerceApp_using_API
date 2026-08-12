@@ -3,10 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/routes.dart';
-import '../../../../app/theme/app_colors.dart';
+import '../../../../app/theme/app_palette.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../shared/widgets/error_view.dart';
 import '../../../cart/presentation/providers/cart_provider.dart';
+import '../../../wishlist/presentation/providers/wishlist_provider.dart';
 import '../../domain/entities/product.dart';
 import '../providers/product_detail_provider.dart';
 
@@ -22,7 +23,6 @@ class ProductDetailScreen extends ConsumerStatefulWidget {
 class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   final PageController _galleryController = PageController();
   int _currentImage = 0;
-  bool _isWishlisted = false;
 
   @override
   void dispose() {
@@ -50,7 +50,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     final productAsync = ref.watch(productDetailProvider(widget.productId));
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppPalette.of(context).background,
       appBar: AppBar(),
       body: productAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -58,15 +58,23 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
           message: error.toString(),
           onRetry: () => ref.invalidate(productDetailProvider(widget.productId)),
         ),
-        data: (product) => _ProductDetailBody(
-          product: product,
-          galleryController: _galleryController,
-          currentImage: _currentImage,
-          isWishlisted: _isWishlisted,
-          onImageChanged: (index) => setState(() => _currentImage = index),
-          onToggleWishlist: () => setState(() => _isWishlisted = !_isWishlisted),
-          onAddToCart: () => _onAddToCart(product),
-        ),
+        data: (product) {
+          final isWishlisted = ref
+              .watch(wishlistControllerProvider)
+              .any((item) => item.id == product.id);
+
+          return _ProductDetailBody(
+            product: product,
+            galleryController: _galleryController,
+            currentImage: _currentImage,
+            isWishlisted: isWishlisted,
+            onImageChanged: (index) => setState(() => _currentImage = index),
+            onToggleWishlist: () => ref
+                .read(wishlistControllerProvider.notifier)
+                .toggle(product),
+            onAddToCart: () => _onAddToCart(product),
+          );
+        },
       ),
     );
   }
@@ -93,6 +101,8 @@ class _ProductDetailBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final text = AppTextStyles.of(context);
+
     return Column(
       children: [
         Expanded(
@@ -121,15 +131,15 @@ class _ProductDetailBody extends StatelessWidget {
                         onToggleWishlist: onToggleWishlist,
                       ),
                       const SizedBox(height: 12),
-                      Text(product.title, style: AppTextStyles.title),
+                      Text(product.title, style: text.title),
                       const SizedBox(height: 16),
                       _PriceRow(product: product),
                       const SizedBox(height: 16),
                       _MetaRow(product: product),
                       const SizedBox(height: 24),
-                      const Text('Description', style: AppTextStyles.heading),
+                      Text('Description', style: text.heading),
                       const SizedBox(height: 8),
-                      Text(product.description, style: AppTextStyles.body),
+                      Text(product.description, style: text.body),
                     ],
                   ),
                 ),
@@ -162,6 +172,8 @@ class _ImageGallery extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+
     final galleryImages = images.isEmpty && thumbnail.isNotEmpty
         ? [thumbnail]
         : images;
@@ -188,19 +200,19 @@ class _ImageGallery extends StatelessWidget {
                       loadingBuilder: (context, child, progress) {
                         if (progress == null) return child;
                         return Container(
-                          color: AppColors.border,
+                          color: palette.border,
                           child: const Center(
                             child: CircularProgressIndicator(strokeWidth: 2),
                           ),
                         );
                       },
                       errorBuilder: (context, error, stack) => Container(
-                        color: AppColors.border,
-                        child: const Center(
+                        color: palette.border,
+                        child: Center(
                           child: Icon(
                             Icons.image_outlined,
                             size: 48,
-                            color: AppColors.muted,
+                            color: palette.muted,
                           ),
                         ),
                       ),
@@ -226,8 +238,8 @@ class _ImageGallery extends StatelessWidget {
                     height: 6,
                     decoration: BoxDecoration(
                       color: index == currentIndex
-                          ? AppColors.ink
-                          : AppColors.border,
+                          ? palette.ink
+                          : palette.border,
                       borderRadius: BorderRadius.circular(3),
                     ),
                   ),
@@ -255,13 +267,15 @@ class _BrandRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+
     return Row(
       children: [
         Expanded(
           child: Text(
             [if (brand.isNotEmpty) brand, if (category.isNotEmpty) category]
                 .join(' · '),
-            style: AppTextStyles.label,
+            style: AppTextStyles.of(context).label,
             overflow: TextOverflow.ellipsis,
           ),
         ),
@@ -269,7 +283,7 @@ class _BrandRow extends StatelessWidget {
           onPressed: onToggleWishlist,
           icon: Icon(
             isWishlisted ? Icons.favorite : Icons.favorite_border,
-            color: isWishlisted ? AppColors.error : AppColors.ink,
+            color: isWishlisted ? palette.error : palette.ink,
           ),
         ),
       ],
@@ -284,12 +298,15 @@ class _PriceRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    final text = AppTextStyles.of(context);
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Text(
           '\$${product.discountPrice.toStringAsFixed(2)}',
-          style: AppTextStyles.display.copyWith(fontSize: 28),
+          style: text.display.copyWith(fontSize: 28),
         ),
         if (product.hasDiscount) ...[
           const SizedBox(width: 10),
@@ -297,7 +314,7 @@ class _PriceRow extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 4),
             child: Text(
               '\$${product.price.toStringAsFixed(2)}',
-              style: AppTextStyles.label.copyWith(
+              style: text.label.copyWith(
                 decoration: TextDecoration.lineThrough,
                 fontSize: 16,
               ),
@@ -309,13 +326,13 @@ class _PriceRow extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
-                color: AppColors.ink,
+                color: palette.ink,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
                 '-${product.discountPercentage.round()}%',
-                style: AppTextStyles.label.copyWith(
-                  color: AppColors.onAccent,
+                style: text.label.copyWith(
+                  color: palette.onAccent,
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
                 ),
@@ -335,6 +352,8 @@ class _MetaRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    final text = AppTextStyles.of(context);
     final inStock = product.stock > 0;
 
     return Row(
@@ -342,17 +361,17 @@ class _MetaRow extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: palette.surface,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: AppColors.border),
+            border: Border.all(color: palette.border),
           ),
           child: Row(
             children: [
-              const Icon(Icons.star_rounded, size: 16, color: AppColors.rating),
+              Icon(Icons.star_rounded, size: 16, color: palette.rating),
               const SizedBox(width: 4),
               Text(
                 product.rating.toStringAsFixed(1),
-                style: AppTextStyles.label.copyWith(color: AppColors.ink),
+                style: text.label.copyWith(color: palette.ink),
               ),
             ],
           ),
@@ -361,22 +380,22 @@ class _MetaRow extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: palette.surface,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: AppColors.border),
+            border: Border.all(color: palette.border),
           ),
           child: Row(
             children: [
               Icon(
                 inStock ? Icons.check_circle_outline : Icons.error_outline,
                 size: 16,
-                color: inStock ? AppColors.rating : AppColors.error,
+                color: inStock ? palette.rating : palette.error,
               ),
               const SizedBox(width: 4),
               Text(
                 inStock ? 'In stock' : 'Out of stock',
-                style: AppTextStyles.label.copyWith(
-                  color: inStock ? AppColors.rating : AppColors.error,
+                style: text.label.copyWith(
+                  color: inStock ? palette.rating : palette.error,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -396,11 +415,14 @@ class _AddToCartBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    final text = AppTextStyles.of(context);
+
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: const Border(top: BorderSide(color: AppColors.border)),
+        color: palette.surface,
+        border: Border(top: BorderSide(color: palette.border)),
       ),
       child: SafeArea(
         top: false,
@@ -410,10 +432,10 @@ class _AddToCartBar extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Total', style: AppTextStyles.label),
+                Text('Total', style: text.label),
                 Text(
                   '\$${(product.discountPrice).toStringAsFixed(2)}',
-                  style: AppTextStyles.heading.copyWith(fontSize: 20),
+                  style: text.heading.copyWith(fontSize: 20),
                 ),
               ],
             ),

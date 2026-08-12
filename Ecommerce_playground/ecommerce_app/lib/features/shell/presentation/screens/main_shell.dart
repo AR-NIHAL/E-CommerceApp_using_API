@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../cart/presentation/providers/cart_provider.dart';
+import '../../../wishlist/presentation/providers/wishlist_provider.dart';
 
 class MainShell extends ConsumerWidget {
   const MainShell({super.key, required this.navigationShell});
@@ -19,6 +20,7 @@ class MainShell extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cartItems = ref.watch(cartControllerProvider).totalItems;
+    final wishlistItems = ref.watch(wishlistControllerProvider).length;
 
     return Scaffold(
       body: navigationShell,
@@ -31,14 +33,26 @@ class MainShell extends ConsumerWidget {
             selectedIcon: Icon(Icons.home),
             label: 'Home',
           ),
-          const NavigationDestination(
-            icon: Icon(Icons.favorite_outline),
-            selectedIcon: Icon(Icons.favorite),
+          NavigationDestination(
+            icon: _BadgedIcon(
+              icon: Icons.favorite_outline,
+              count: wishlistItems,
+            ),
+            selectedIcon: _BadgedIcon(
+              icon: Icons.favorite,
+              count: wishlistItems,
+            ),
             label: 'Wishlist',
           ),
           NavigationDestination(
-            icon: _CartIcon(totalItems: cartItems),
-            selectedIcon: _CartIcon(totalItems: cartItems),
+            icon: _BadgedIcon(
+              icon: Icons.shopping_bag_outlined,
+              count: cartItems,
+            ),
+            selectedIcon: _BadgedIcon(
+              icon: Icons.shopping_bag_outlined,
+              count: cartItems,
+            ),
             label: 'Cart',
           ),
           const NavigationDestination(
@@ -52,18 +66,19 @@ class MainShell extends ConsumerWidget {
   }
 }
 
-class _CartIcon extends StatelessWidget {
-  const _CartIcon({required this.totalItems});
+class _BadgedIcon extends StatelessWidget {
+  const _BadgedIcon({required this.icon, required this.count});
 
-  final int totalItems;
+  final IconData icon;
+  final int count;
 
   @override
   Widget build(BuildContext context) {
-    if (totalItems <= 0) return const Icon(Icons.shopping_bag_outlined);
+    if (count <= 0) return Icon(icon);
 
     return Badge(
-      label: Text('$totalItems'),
-      child: const Icon(Icons.shopping_bag_outlined),
+      label: Text('$count'),
+      child: Icon(icon),
     );
   }
 }

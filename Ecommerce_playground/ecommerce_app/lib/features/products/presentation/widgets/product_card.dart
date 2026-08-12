@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../app/theme/app_colors.dart';
+import '../../../../app/theme/app_palette.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../domain/entities/product.dart';
 
@@ -22,13 +22,16 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    final text = AppTextStyles.of(context);
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: palette.surface,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: palette.border),
         ),
         clipBehavior: Clip.antiAlias,
         child: Column(
@@ -47,32 +50,32 @@ class ProductCard extends StatelessWidget {
                             loadingBuilder: (context, child, progress) {
                               if (progress == null) return child;
                               return Container(
-                                color: AppColors.border,
+                                color: palette.border,
                                 alignment: Alignment.center,
-                                child: const Icon(
+                                child: Icon(
                                   Icons.image_outlined,
                                   size: 32,
-                                  color: AppColors.muted,
+                                  color: palette.muted,
                                 ),
                               );
                             },
                             errorBuilder: (context, error, stack) => Container(
-                              color: AppColors.border,
+                              color: palette.border,
                               alignment: Alignment.center,
-                              child: const Icon(
+                              child: Icon(
                                 Icons.image_outlined,
                                 size: 32,
-                                color: AppColors.muted,
+                                color: palette.muted,
                               ),
                             ),
                           )
                         : Container(
-                            color: AppColors.border,
+                            color: palette.border,
                             alignment: Alignment.center,
-                            child: const Icon(
+                            child: Icon(
                               Icons.image_outlined,
                               size: 32,
-                              color: AppColors.muted,
+                              color: palette.muted,
                             ),
                           ),
                   ),
@@ -104,8 +107,8 @@ class ProductCard extends StatelessWidget {
                     product.title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: AppTextStyles.label.copyWith(
-                      color: AppColors.ink,
+                    style: text.label.copyWith(
+                      color: palette.ink,
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
@@ -119,14 +122,14 @@ class ProductCard extends StatelessWidget {
                                 children: [
                                   Text(
                                     '\$${product.discountPrice.toStringAsFixed(2)}',
-                                    style: AppTextStyles.price.copyWith(
+                                    style: text.price.copyWith(
                                       fontSize: 15,
                                     ),
                                   ),
                                   const SizedBox(width: 6),
                                   Text(
                                     '\$${product.price.toStringAsFixed(2)}',
-                                    style: AppTextStyles.label.copyWith(
+                                    style: text.label.copyWith(
                                       decoration: TextDecoration.lineThrough,
                                       fontSize: 12,
                                     ),
@@ -135,7 +138,7 @@ class ProductCard extends StatelessWidget {
                               )
                             : Text(
                                 '\$${product.price.toStringAsFixed(2)}',
-                                style: AppTextStyles.price.copyWith(fontSize: 15),
+                                style: text.price.copyWith(fontSize: 15),
                               ),
                       ),
                       _AddToCartButton(onPressed: onAddToCart),
@@ -162,19 +165,20 @@ class _DiscountBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!hasDiscount) return const SizedBox.shrink();
+    final palette = AppPalette.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.ink,
+        color: palette.ink,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
         '-${discount.round()}%',
-        style: AppTextStyles.label.copyWith(
-          color: AppColors.onAccent,
-          fontSize: 12,
-          fontWeight: FontWeight.w700,
-        ),
+        style: AppTextStyles.of(context).label.copyWith(
+              color: palette.onAccent,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+            ),
       ),
     );
   }
@@ -188,8 +192,10 @@ class _WishlistButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+
     return Material(
-      color: AppColors.surface,
+      color: palette.surface,
       shape: const CircleBorder(),
       elevation: 1,
       child: InkWell(
@@ -200,7 +206,7 @@ class _WishlistButton extends StatelessWidget {
           child: Icon(
             isWishlisted ? Icons.favorite : Icons.favorite_border,
             size: 18,
-            color: isWishlisted ? AppColors.error : AppColors.ink,
+            color: isWishlisted ? palette.error : palette.ink,
           ),
         ),
       ),
@@ -215,15 +221,17 @@ class _AddToCartButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+
     return IconButton(
       onPressed: onPressed,
       constraints: const BoxConstraints.tightFor(width: 36, height: 36),
       padding: EdgeInsets.zero,
       style: IconButton.styleFrom(
-        backgroundColor: AppColors.ink,
+        backgroundColor: palette.ink,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
-      icon: const Icon(Icons.add, size: 18, color: AppColors.onAccent),
+      icon: Icon(Icons.add, size: 18, color: palette.onAccent),
     );
   }
 }
@@ -235,13 +243,15 @@ class _RatingRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+
     return Row(
       children: [
-        const Icon(Icons.star_rounded, size: 16, color: AppColors.rating),
+        Icon(Icons.star_rounded, size: 16, color: palette.rating),
         const SizedBox(width: 4),
         Text(
           rating.toStringAsFixed(1),
-          style: AppTextStyles.label.copyWith(color: AppColors.inkSoft),
+          style: AppTextStyles.of(context).label.copyWith(color: palette.inkSoft),
         ),
       ],
     );
