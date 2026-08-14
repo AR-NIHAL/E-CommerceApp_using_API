@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../app/router/routes.dart';
 import '../../../../app/theme/app_palette.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../shared/widgets/empty_view.dart';
@@ -225,12 +227,7 @@ class _CartSummaryBar extends StatelessWidget {
   final CartState cart;
 
   void _onCheckout(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Checkout is coming soon'),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+    context.go(AppRoutes.checkout);
   }
 
   @override

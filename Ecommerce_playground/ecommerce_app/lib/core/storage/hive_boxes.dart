@@ -7,6 +7,7 @@ class HiveBoxes {
   static const String cart = 'cart_box';
   static const String wishlist = 'wishlist_box';
   static const String settings = 'settings_box';
+  static const String orders = 'orders_box';
 
   static Future<Box> openAuthBox() async {
     if (Hive.isBoxOpen(auth)) return Hive.box(auth);
@@ -26,5 +27,10 @@ class HiveBoxes {
   static Future<Box> openSettingsBox() async {
     if (Hive.isBoxOpen(settings)) return Hive.box(settings);
     return Hive.openBox(settings);
+  }
+
+  static Future<Box> openOrdersBox() async {
+    if (Hive.isBoxOpen(orders)) return Hive.box(orders);
+    return Hive.openBox(orders);
   }
 }

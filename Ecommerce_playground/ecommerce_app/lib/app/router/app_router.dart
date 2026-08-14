@@ -5,6 +5,10 @@ import '../../features/auth/presentation/providers/auth_dependencies.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/cart/presentation/screens/cart_screen.dart';
+import '../../features/checkout/presentation/screens/checkout_screen.dart';
+import '../../features/checkout/presentation/screens/order_detail_screen.dart';
+import '../../features/checkout/presentation/screens/order_history_screen.dart';
+import '../../features/checkout/presentation/screens/order_success_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/products/presentation/screens/home_screen.dart';
 import '../../features/products/presentation/screens/product_detail_screen.dart';
@@ -29,8 +33,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
       final isOnboarding = location == AppRoutes.onboarding;
       final isLogin = location == AppRoutes.login;
-      final isShell = location.startsWith(AppRoutes.shell) ||
-          location == AppRoutes.productDetail;
+      final isGuarded = location.startsWith(AppRoutes.shell) ||
+          location == AppRoutes.productDetail ||
+          location == AppRoutes.checkout ||
+          location.startsWith(AppRoutes.orderSuccess) ||
+          location == AppRoutes.orderHistory ||
+          location.startsWith(AppRoutes.orderDetail);
 
       if (isOnboarding) {
         if (hasSeenOnboarding && isLoggedIn) return AppRoutes.home;
@@ -44,7 +52,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         return null;
       }
 
-      if (isShell) {
+      if (isGuarded) {
         if (!isAuthResolved) return null;
         if (!isLoggedIn) return AppRoutes.login;
       }
@@ -68,6 +76,28 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => ProductDetailScreen(
           productId: int.parse(state.pathParameters['id']!),
         ),
+      ),
+      GoRoute(
+        path: AppRoutes.checkout,
+        name: 'checkout',
+        builder: (context, state) => const CheckoutScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.orderSuccess,
+        name: 'orderSuccess',
+        builder: (context, state) =>
+            OrderSuccessScreen(orderId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: AppRoutes.orderHistory,
+        name: 'orderHistory',
+        builder: (context, state) => const OrderHistoryScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.orderDetail,
+        name: 'orderDetail',
+        builder: (context, state) =>
+            OrderDetailScreen(orderId: state.pathParameters['id']!),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>

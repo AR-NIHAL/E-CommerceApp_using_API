@@ -40,8 +40,8 @@ class ProfileScreen extends ConsumerWidget {
                     ListTile(
                       leading: const Icon(Icons.receipt_long_outlined),
                       title: const Text('Order history'),
-                      subtitle: const Text('Coming soon'),
-                      enabled: false,
+                      subtitle: const Text('View your past orders'),
+                      onTap: () => context.push(AppRoutes.orderHistory),
                       shape: const RoundedRectangleBorder(),
                     ),
                   ],
