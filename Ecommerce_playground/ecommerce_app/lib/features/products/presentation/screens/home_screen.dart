@@ -12,6 +12,7 @@ import '../providers/products_provider.dart';
 import '../widgets/category_chips.dart';
 import '../widgets/product_card.dart';
 import '../widgets/product_search_bar.dart';
+import '../widgets/promo_banner_carousel.dart';
 import '../widgets/sort_sheet.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -37,81 +38,123 @@ class HomeScreen extends ConsumerWidget {
         ],
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-              child: ProductSearchBar(),
-            ),
-            const CategoryChips(),
-            const SizedBox(height: 12),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Products',
-                    style: AppTextStyles.of(context).heading,
-                  ),
-                  _SortButton(
-                    sort: state.sort,
-                    onTap: () => SortSheet.show(
-                      context,
-                      selected: state.sort,
-                      onSelect: controller.setSort,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: _buildBody(context, ref, state, controller),
-            ),
-          ],
-        ),
+        child: _buildBody(context, ref, state, controller),
       ),
     );
   }
 
   Widget _buildBody(BuildContext context, WidgetRef ref, ProductsState state,
       ProductsController controller) {
+    return NotificationListener<ScrollNotification>(
+      onNotification: (notification) {
+        if (notification.metrics.pixels >=
+            notification.metrics.maxScrollExtent - 400) {
+          controller.loadMore();
+        }
+        return false;
+      },
+      child: RefreshIndicator(
+        onRefresh: controller.refresh,
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                child: ProductSearchBar(),
+              ),
+            ),
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 12),
+                child: PromoBannerCarousel(),
+              ),
+            ),
+            const SliverToBoxAdapter(child: CategoryChips()),
+            const SliverToBoxAdapter(child: SizedBox(height: 12)),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Products',
+                      style: AppTextStyles.of(context).heading,
+                    ),
+                    _SortButton(
+                      sort: state.sort,
+                      onTap: () => SortSheet.show(
+                        context,
+                        selected: state.sort,
+                        onSelect: controller.setSort,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 8)),
+            ..._buildProductSlivers(context, ref, state, controller),
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildProductSlivers(BuildContext context, WidgetRef ref,
+      ProductsState state, ProductsController controller) {
+    const gridDelegate = SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 2,
+      mainAxisSpacing: 12,
+      crossAxisSpacing: 12,
+      childAspectRatio: 0.62,
+    );
+
     if (state.isLoading) {
-      return const _ProductGridShimmer();
+      return [
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+          sliver: SliverGrid(
+            gridDelegate: gridDelegate,
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => const ProductCardShimmer(),
+              childCount: 6,
+            ),
+          ),
+        ),
+      ];
     }
 
     if (state.error != null && state.products.isEmpty) {
-      return ErrorView(message: state.error!, onRetry: controller.refresh);
+      return [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: ErrorView(message: state.error!, onRetry: controller.refresh),
+        ),
+      ];
     }
 
     if (state.products.isEmpty) {
-      return Center(
-        child: Text('No products found', style: AppTextStyles.of(context).body),
-      );
+      return [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Center(
+            child: Text(
+              'No products found',
+              style: AppTextStyles.of(context).body,
+            ),
+          ),
+        ),
+      ];
     }
 
-    return RefreshIndicator(
-      onRefresh: controller.refresh,
-      child: NotificationListener<ScrollNotification>(
-        onNotification: (notification) {
-          if (notification.metrics.pixels >=
-              notification.metrics.maxScrollExtent - 400) {
-            controller.loadMore();
-          }
-          return false;
-        },
-        child: GridView.builder(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 12,
-            crossAxisSpacing: 12,
-            childAspectRatio: 0.62,
-          ),
-          itemCount: state.products.length + (state.hasMore ? 1 : 0),
-          itemBuilder: (context, index) {
+    return [
+      SliverPadding(
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+        sliver: SliverGrid(
+          gridDelegate: gridDelegate,
+          delegate: SliverChildBuilderDelegate((context, index) {
             if (index >= state.products.length) {
               return const ProductCardShimmer();
             }
@@ -130,29 +173,10 @@ class HomeScreen extends ConsumerWidget {
                   .read(wishlistControllerProvider.notifier)
                   .toggle(product),
             );
-          },
+          }, childCount: state.products.length + (state.hasMore ? 1 : 0)),
         ),
       ),
-    );
-  }
-}
-
-class _ProductGridShimmer extends StatelessWidget {
-  const _ProductGridShimmer();
-
-  @override
-  Widget build(BuildContext context) {
-    return GridView.builder(
-      padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: 0.62,
-      ),
-      itemCount: 6,
-      itemBuilder: (context, index) => const ProductCardShimmer(),
-    );
+    ];
   }
 }
 
