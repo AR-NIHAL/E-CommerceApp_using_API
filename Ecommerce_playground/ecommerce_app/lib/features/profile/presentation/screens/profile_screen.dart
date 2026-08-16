@@ -18,7 +18,7 @@ class ProfileScreen extends ConsumerWidget {
     final user = ref.watch(authControllerProvider).value;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile')),
+      appBar: AppBar(title: const Text('Settings')),
       body: user == null
           ? const Center(child: CircularProgressIndicator())
           : ListView(

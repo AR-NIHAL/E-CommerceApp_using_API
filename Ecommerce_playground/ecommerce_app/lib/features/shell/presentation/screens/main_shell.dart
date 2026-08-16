@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/theme/app_palette.dart';
 import '../../../cart/presentation/providers/cart_provider.dart';
 import '../../../wishlist/presentation/providers/wishlist_provider.dart';
 
@@ -24,61 +25,132 @@ class MainShell extends ConsumerWidget {
 
     return Scaffold(
       body: navigationShell,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: navigationShell.currentIndex,
-        onDestinationSelected: (index) => _onDestinationSelected(context, index),
-        destinations: [
-          const NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          NavigationDestination(
-            icon: _BadgedIcon(
-              icon: Icons.favorite_outline,
-              count: wishlistItems,
-            ),
-            selectedIcon: _BadgedIcon(
-              icon: Icons.favorite,
-              count: wishlistItems,
-            ),
-            label: 'Wishlist',
-          ),
-          NavigationDestination(
-            icon: _BadgedIcon(
-              icon: Icons.shopping_bag_outlined,
-              count: cartItems,
-            ),
-            selectedIcon: _BadgedIcon(
-              icon: Icons.shopping_bag_outlined,
-              count: cartItems,
-            ),
-            label: 'Cart',
-          ),
-          const NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+      bottomNavigationBar: _FloatingNavBar(
+        currentIndex: navigationShell.currentIndex,
+        cartCount: cartItems,
+        wishlistCount: wishlistItems,
+        onTap: (index) => _onDestinationSelected(context, index),
       ),
     );
   }
 }
 
-class _BadgedIcon extends StatelessWidget {
-  const _BadgedIcon({required this.icon, required this.count});
+class _FloatingNavBar extends StatelessWidget {
+  const _FloatingNavBar({
+    required this.currentIndex,
+    required this.cartCount,
+    required this.wishlistCount,
+    required this.onTap,
+  });
 
-  final IconData icon;
-  final int count;
+  final int currentIndex;
+  final int cartCount;
+  final int wishlistCount;
+  final ValueChanged<int> onTap;
 
   @override
   Widget build(BuildContext context) {
-    if (count <= 0) return Icon(icon);
+    final palette = AppPalette.of(context);
 
-    return Badge(
-      label: Text('$count'),
-      child: Icon(icon),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+      child: Container(
+        height: 64,
+        decoration: BoxDecoration(
+          color: palette.surface,
+          borderRadius: BorderRadius.circular(32),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 24,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            _NavItem(
+              icon: Icons.home_outlined,
+              selectedIcon: Icons.home,
+              selected: currentIndex == 0,
+              onTap: () => onTap(0),
+            ),
+            _NavItem(
+              icon: Icons.favorite_outline,
+              selectedIcon: Icons.favorite,
+              selected: currentIndex == 1,
+              badgeCount: wishlistCount,
+              onTap: () => onTap(1),
+            ),
+            _NavItem(
+              icon: Icons.shopping_bag_outlined,
+              selectedIcon: Icons.shopping_bag,
+              selected: currentIndex == 2,
+              badgeCount: cartCount,
+              onTap: () => onTap(2),
+            ),
+            _NavItem(
+              icon: Icons.settings_outlined,
+              selectedIcon: Icons.settings,
+              selected: currentIndex == 3,
+              onTap: () => onTap(3),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _NavItem extends StatelessWidget {
+  const _NavItem({
+    required this.icon,
+    required this.selectedIcon,
+    required this.selected,
+    required this.onTap,
+    this.badgeCount = 0,
+  });
+
+  final IconData icon;
+  final IconData selectedIcon;
+  final bool selected;
+  final VoidCallback onTap;
+  final int badgeCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    final color = selected ? palette.ink : palette.muted;
+
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        customBorder: const CircleBorder(),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Badge(
+              isLabelVisible: badgeCount > 0,
+              label: Text('$badgeCount'),
+              child: Icon(
+                selected ? selectedIcon : icon,
+                size: 24,
+                color: color,
+              ),
+            ),
+            const SizedBox(height: 6),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: selected ? 5 : 3,
+              height: selected ? 5 : 3,
+              decoration: BoxDecoration(
+                color: selected ? palette.ink : Colors.transparent,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

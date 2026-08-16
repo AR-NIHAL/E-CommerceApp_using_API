@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/routes.dart';
+import '../../../../app/theme/app_palette.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../shared/widgets/error_view.dart';
 import '../../../../shared/widgets/product_card_shimmer.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../cart/presentation/providers/cart_provider.dart';
 import '../../../wishlist/presentation/providers/wishlist_provider.dart';
 import '../providers/products_provider.dart';
@@ -24,21 +26,15 @@ class HomeScreen extends ConsumerWidget {
     final controller = ref.read(productsControllerProvider.notifier);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'SwiftShop',
-          style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: -0.5),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () => context.go(AppRoutes.cart),
-            icon: const Icon(Icons.shopping_bag_outlined),
-          ),
-          const SizedBox(width: 4),
-        ],
-      ),
       body: SafeArea(
-        child: _buildBody(context, ref, state, controller),
+        child: Column(
+          children: [
+            const _HomeTopBar(),
+            Expanded(
+              child: _buildBody(context, ref, state, controller),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -58,12 +54,6 @@ class HomeScreen extends ConsumerWidget {
         child: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-                child: ProductSearchBar(),
-              ),
-            ),
             const SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.only(bottom: 12),
@@ -205,5 +195,83 @@ class _SortButton extends StatelessWidget {
       ProductSort.priceHighToLow => 'Highest price',
       ProductSort.rating => 'Top rated',
     };
+  }
+}
+
+class _HomeTopBar extends ConsumerWidget {
+  const _HomeTopBar();
+
+  static const String logoUrl =
+      'https://picsum.photos/seed/swiftshop/96/96';
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final palette = AppPalette.of(context);
+    final user = ref.watch(authControllerProvider).value;
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Image.network(
+              logoUrl,
+              width: 36,
+              height: 36,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stack) => Container(
+                width: 36,
+                height: 36,
+                color: palette.surface,
+                alignment: Alignment.center,
+                child: Icon(Icons.storefront, size: 20, color: palette.ink),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          const Expanded(child: ProductSearchBar()),
+          const SizedBox(width: 8),
+          _ProfileAvatar(userImage: user?.image ?? ''),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProfileAvatar extends StatelessWidget {
+  const _ProfileAvatar({required this.userImage});
+
+  final String userImage;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+
+    return InkWell(
+      onTap: () => context.go(AppRoutes.profile),
+      customBorder: const CircleBorder(),
+      child: CircleAvatar(
+        radius: 18,
+        backgroundColor: palette.surface,
+        child: userImage.isEmpty
+            ? Icon(Icons.person_outline, size: 20, color: palette.ink)
+            : ClipOval(
+                child: Image.network(
+                  userImage,
+                  width: 36,
+                  height: 36,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stack) => Container(
+                    width: 36,
+                    height: 36,
+                    color: palette.surface,
+                    alignment: Alignment.center,
+                    child: Icon(Icons.person_outline, size: 20, color: palette.ink),
+                  ),
+                ),
+              ),
+      ),
+    );
   }
 }
